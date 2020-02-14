@@ -11,7 +11,11 @@ return [
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
-    'modules' => [],
+    'modules' => [
+        'news' => [
+            'class' => backend\modules\news\Module::class,
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -38,10 +42,9 @@ return [
             'errorAction' => 'site/error',
         ],
         'urlManager' => [
+            'class' => yii\web\UrlManager::class,
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
         ],
     ],
     'params' => $params,
