@@ -17,4 +17,18 @@ class Migration extends \yii\db\Migration
         }
         parent::createTable($table, $columns, $options);
     }
+
+    /**
+     * Creates a long blob column.
+     * @return \yii\db\ColumnSchemaBuilder the column instance which can be further customized.
+     * @throws \yii\base\NotSupportedException
+     */
+    public function longBlob()
+    {
+        if ($this->db->driverName === 'mysql') {
+            return $this->getDb()->getSchema()->createColumnSchemaBuilder('longblob');
+        }
+
+        return $this->text();
+    }
 }

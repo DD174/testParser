@@ -1,6 +1,6 @@
 <?php
 
-namespace console\models\news;
+namespace backend\modules\news\models;
 
 /**
  *
