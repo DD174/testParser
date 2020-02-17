@@ -29,14 +29,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
-            'title',
-            'body:ntext',
-            'date_published',
-            'original_url:url',
-            'original_html:ntext',
-            'created_at',
-            'updated_at',
+            $model::FIELD_ID,
+            $model::FIELD_TITLE,
+            $model::FIELD_BODY . ':ntext',
+            $model::FIELD_DATE_PUBLISHED. ':datetime',
+            $model::FIELD_ORIGINAL_URL . ':url',
+            [
+                'attribute' => $model::FIELD_ORIGINAL_HTML,
+                'value' => \yii\helpers\StringHelper::truncate($model->original_html, 100),
+            ],
+            $model::FIELD_CREATED_AT . ':datetime',
+            $model::FIELD_UPDATED_AT . ':datetime',
         ],
     ]) ?>
 

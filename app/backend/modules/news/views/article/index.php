@@ -1,5 +1,6 @@
 <?php
 
+use backend\modules\news\models\Article;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -18,23 +19,25 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'title',
-            'body:ntext',
-            'date_published',
-            'original_url:url',
-            //'original_html:ntext',
-            //'created_at',
-            //'updated_at',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+    <?= /** @noinspection PhpUnhandledExceptionInspection */
+    GridView::widget(
+        [
+            'dataProvider' => $dataProvider,
+            'columns' => [
+                ['class' => 'yii\grid\ActionColumn'],
+                Article::FIELD_ID,
+                Article::FIELD_TITLE,
+                [
+                    'attribute' => Article::FIELD_BODY,
+                    'value' => function (Article $article) {
+                        return \yii\helpers\StringHelper::truncate($article->body, 100);
+                    }
+                ],
+                Article::FIELD_DATE_PUBLISHED,
+                Article::FIELD_ORIGINAL_URL . ':url',
+            ],
+        ]
+    ); ?>
 
 
 </div>
