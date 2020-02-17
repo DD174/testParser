@@ -15,11 +15,10 @@ RUN docker-php-ext-install zip intl mbstring pdo_mysql exif \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd
 
-RUN pecl install -o -f xdebug \
-    && rm -rf /tmp/pear
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
 
 COPY ./install-composer.sh /
-COPY ./php.ini /usr/local/etc/php/
 COPY ./www.conf /usr/local/etc/php/
 
 RUN apt-get purge -y g++ \
@@ -32,7 +31,7 @@ RUN apt-get purge -y g++ \
 RUN usermod -u 1000 www-data
 
 VOLUME /root/.composer
-WORKDIR /var/www
+WORKDIR /var/app
 
 EXPOSE 9000
 CMD ["php-fpm"]
