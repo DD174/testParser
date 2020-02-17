@@ -2,51 +2,43 @@
 
 namespace backend\modules\news\models;
 
-use simplehtmldom\HtmlDocument;
-use simplehtmldom\HtmlNode;
-
 /**
  *
  */
 class Article extends \common\models\news\Article
 {
-    public function beforeSave($insert)
+    /**
+     * Признак того, что после сохранения нужно создать задание на парсинг
+     * @var bool
+     */
+    public bool $createJob = false;
+
+    /**
+     * @inheritDoc
+     */
+    public function afterSave($insert, $changedAttributes)
     {
-        if (true || $insert) {
-//            /** @var \simplehtmldom\HtmlDocument $sHtml */
-            if (!$str = $this->original_html) {
-                $str = file_get_contents($this->original_url);
-            }
-            if ($str !== false) {
-                $this->original_html = $str;//iconv('windows-1251', 'utf-8//IGNORE', $str);
-                $html = new HtmlDocument(
-                    $str
-                );
+        parent::afterSave($insert, $changedAttributes);
+        if ($this->createJob) {
+            $job = new \console\jobs\ParserJob($this);
 
-                /** @var HtmlDocument $article */
-                if (!$article = $html->find('article[itemprop=articleBody]', 0)) {
-                    throw new \DomainException('На странице новости не найдена статья. Новость # . ' . $this->id);
-                }
-                /** @var HtmlNode $el */
-                $el = $article->find('h1', 0);
-                if (!$this->title = ($el->innertext() ?? null)) {
-                    throw new \DomainException('На странице новости не найден заголовок. Новость # . ' . $this->id);
-                }
-                /** @var HtmlNode[] $es */
-                $es = $article->find('p, h2');
-                if (!is_array($es)) {
-                    throw new \DomainException('На странице новости не найден контент новости. Новость # . ' . $this->id);
-                }
-                $body = [];
-                foreach ($es as $el) {
-                    $body[] = $el->outertext();
-                }
-                $this->body = implode("\n", $body);
-            } else {
-                $this->original_html = null;
-            }
+            // TODO: добавлять в очередь, а не запускать :)
+            $job->run();
+//            \Yii::$app->queue->push($job);
         }
+    }
 
-        return parent::beforeSave($insert);
+    /**
+     * TODO по хорошему нужно "обновлять" только изменившиеся картинки, а не удалять все, а после добавлять
+     * @param string[] $images - в строке путь до файла на диске
+     */
+    public function replaceImages(array $images)
+    {
+        if ($oldImages = $this->getBehaviorGallery()->getImages()) {
+            $this->getBehaviorGallery()->deleteImages(\yii\helpers\ArrayHelper::map($oldImages, 'id', 'id'));
+        }
+        foreach ($images as $image) {
+            $this->getBehaviorGallery()->addImage($image);
+        }
     }
 }

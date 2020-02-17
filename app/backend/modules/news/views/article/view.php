@@ -1,10 +1,11 @@
 <?php
 
+use backend\modules\news\models\Article;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\news\models\Article */
+/* @var $model Article */
 
 $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Articles', 'url' => ['index']];
@@ -32,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             $model::FIELD_ID,
             $model::FIELD_TITLE,
             $model::FIELD_BODY . ':ntext',
-            $model::FIELD_DATE_PUBLISHED. ':datetime',
+            $model::FIELD_DATE_PUBLISHED . ':datetime',
             $model::FIELD_ORIGINAL_URL . ':url',
             [
                 'attribute' => $model::FIELD_ORIGINAL_HTML,
@@ -40,6 +41,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             $model::FIELD_CREATED_AT . ':datetime',
             $model::FIELD_UPDATED_AT . ':datetime',
+            [
+                'label' => 'Images',
+                'format' => 'html',
+                'value' => function (Article $model) {
+                    $str = '';
+                    foreach ($model->getBehaviorGallery()->getImages() as $image) {
+                        $str .= '<img src="' . $image->getUrl('preview') . ' " />';
+                    }
+                    return $str;
+                }
+            ]
         ],
     ]) ?>
 

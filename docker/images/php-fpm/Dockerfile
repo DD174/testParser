@@ -7,16 +7,19 @@ RUN apt-get update && apt-get install -y \
         libicu-dev \
         wget \
         git \
+        unzip \
         libzip-dev \
         libonig-dev \
+        libmcrypt-dev \
             --no-install-recommends
 
 RUN docker-php-ext-install zip intl mbstring pdo_mysql exif \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd
 
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
+RUN pecl install xdebug mcrypt \
+    && docker-php-ext-enable xdebug \
+    && docker-php-ext-enable mcrypt
 
 COPY ./install-composer.sh /
 COPY ./www.conf /usr/local/etc/php/

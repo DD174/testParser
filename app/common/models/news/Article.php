@@ -31,6 +31,8 @@ class Article extends \common\base\ActiveRecord
     public const FIELD_CREATED_AT = 'created_at';
     public const FIELD_UPDATED_AT = 'updated_at';
 
+    public const BEHAVIOR_GALLERY = 'gallery';
+
     /**
      * @inheritDoc
      */
@@ -46,6 +48,14 @@ class Article extends \common\base\ActiveRecord
     {
         return [
             \yii\behaviors\TimestampBehavior::class,
+            self::BEHAVIOR_GALLERY => [
+                'class' => \common\behaviors\GalleryBehavior::class,
+                'type' => 'article',
+                'extension' => 'jpg',
+                // TODO: вынести в отдельное хранилище
+                'directory' => \Yii::getAlias('@webroot') . '/gallery/article',
+                'url' => \Yii::getAlias('@web') . '/gallery/article',
+            ],
         ];
     }
 
@@ -60,6 +70,7 @@ class Article extends \common\base\ActiveRecord
             [[self::FIELD_DATE_PUBLISHED], 'string'],
             [[self::FIELD_CREATED_AT, self::FIELD_UPDATED_AT], 'integer'],
             [[self::FIELD_TITLE, self::FIELD_ORIGINAL_URL], 'string', 'max' => 255],
+            [[self::FIELD_ORIGINAL_URL], 'url'],
         ];
     }
 
@@ -78,5 +89,14 @@ class Article extends \common\base\ActiveRecord
             self::FIELD_CREATED_AT => 'Created At',
             self::FIELD_UPDATED_AT => 'Updated At',
         ];
+    }
+
+    /**
+     * @return \common\behaviors\GalleryBehavior
+     * @noinspection PhpIncompatibleReturnTypeInspection
+     */
+    public function getBehaviorGallery()
+    {
+        return $this->getBehavior(self::BEHAVIOR_GALLERY);
     }
 }

@@ -18,7 +18,9 @@
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
-        "simplehtmldom/simplehtmldom": "2.0-RC2"
+        "simplehtmldom/simplehtmldom": "2.0-RC2",
+        "zxbodya/yii2-gallery-manager": "*@dev",
+        "yiisoft/yii2-queue": "^2.3"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
@@ -41,6 +43,10 @@
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "vcs",
+            "url":  "https://github.com/DD174/yii2-gallery-manager.git"
         }
     ]
 }
